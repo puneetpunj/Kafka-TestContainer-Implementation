@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="End To End Kafka Test" allow-return-values="true" thread-count="2">
+
+
+  <test name="E2E Tests for Kafka">
+    <classes>
+      <class name="org.asx.KafkaTest"/>
+    </classes>
+  </test>
+
+</suite>
