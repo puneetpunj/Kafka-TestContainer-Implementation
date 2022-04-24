@@ -7,6 +7,7 @@ import org.testcontainers.utility.DockerImageName;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import io.qameta.allure.*;
 
 import java.util.Properties;
 
@@ -22,16 +23,23 @@ import java.util.Properties;
     Consumer consumer = new Consumer();
 
     @BeforeTest
+    @Step("Start Kafka Docker Container")
     public void beforeTest() {
       kafkaContainer.start();
       System.out.println("Starting kafka container");
     }
 
-    @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @Test(description = "E2E test for Kafka stream")
+    @Description("Produce and Consume messages on Kafka Topic")
+    @Story("Implement Kafka Test Containers")
     public void TestKafkaProducer() throws Exception {
-      properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers());
-      properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-      properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+      properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+          kafkaContainer.getBootstrapServers());
+      properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+          StringSerializer.class.getName());
+      properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+          StringSerializer.class.getName());
 
       // Create the producer
       Config conf = Config
@@ -43,14 +51,29 @@ import java.util.Properties;
           .Properties(properties)
           .build();
 
-      producer.createTopic(conf);
-      producer.produceMessages(conf);
-      consumer.consumeMessages(conf);
+
+      CreateKafkaTopic(conf);
+      ProduceMessagesOnTopic(conf);
+      ConsumeMessagesFromTopic(conf);
+
     }
 
     @AfterTest
+    @Step("Stopping Kafka Docker Container")
     public void StopContainer() {
       kafkaContainer.stop();
       System.out.println("Stopping kafka container");
+    }
+    @Step("Create Kafka Topic")
+    private void CreateKafkaTopic(Config conf) throws Exception{
+      producer.createTopic(conf);
+    }
+    @Step("Produce Messages")
+    private void ProduceMessagesOnTopic(Config conf) throws Exception{
+      producer.produceMessages(conf);
+    }
+    @Step("Consume Messages")
+    private void ConsumeMessagesFromTopic(Config conf) throws Exception{
+      consumer.consumeMessages(conf);
     }
   }
