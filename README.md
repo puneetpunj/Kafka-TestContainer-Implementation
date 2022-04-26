@@ -1,3 +1,5 @@
+![CI](https://github.com/puneetpunj/Kafka-TestContainer-Implementation/workflows/CI/badge.svg)
+
 # Kafka Test Container Implementation
 
 This repo contains a code to create 
